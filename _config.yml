@@ -1,37 +1,26 @@
-# Site settings
-title: Another Blog
-url: "http://laobubu.github.io"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
-baseurl: "/jekyll-theme-EasyBook" # the prefix of your site uri, eg. `/jekyll-theme-EasyBook` or just one slash `/`
-#timezone: Asia/Chongqing
-description: >
-  One or more sentences introducing this blog.
+# Dependencies
+markdown:         redcarpet
+highlighter:      pygments
 
-# Your information
-email: your_email@example.com
-author: your_name
-avatar: "//www.gravatar.com/avatar/your_email_md5?d=mm&s=135"
-profile: One sentence introducing yourself.
-#twitter_username: twitter_username
-#github_username:  github_username
+# Permalinks
+permalink:        pretty
+relative_permalinks: true
 
-# Comment Service (Disqus or 多说)
-#  choose one and un-comment the line to active it
-#disqus_shortname: xxx   # get one: https://disqus.com/admin/signup/
-#duoshuo_shortname: xxx  # get one: http://duoshuo.com/create-site/
+# Setup
+title:            Hyde
+tagline:          'A Jekyll theme'
+description:      'A brazen two-column <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that pairs a prominent sidebar with uncomplicated content. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
+url:              http://hyde.getpoole.com
+baseurl:          /
 
-permalink: /archivers/:title
-gems:
- - jekyll-paginate
- - jekyll-gist
- - jemoji
+author:
+  name:           'Mark Otto'
+  url:            https://twitter.com/mdo
 
-# Build settings
-paginate: 5
-paginate_path: "page:num"
+paginate:         5
 
-highlighter: rouge
-markdown: kramdown
+# Custom vars
+version:          2.1.0
 
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge
+github:
+  repo:           https://github.com/poole/hyde
