@@ -3,9 +3,36 @@
 <head>
 	<title>Take a Nap</title>
 </head>
+<script type="text/javascript">
+
+	function playMusic() {
+
+		var songs = ["http://music.163.com/outchain/player?type=2&id=17706562&auto=1&height=66", // Good Time
+			"http://music.163.com/outchain/player?type=2&id=17996972&auto=1&height=66", // Summertrain
+			"http://music.163.com/outchain/player?type=2&id=1217823&auto=1&height=66", 	// B What U Wanna B
+			"http://music.163.com/outchain/player?type=2&id=16607998&auto=1&height=66"]; // The Show
+
+		var intervals = [207 * 1000, 272 * 1000, 210 * 1000, 236 * 1000];
+
+		var index = Math.floor(Math.random() * 10) % 4;
+		doPlay(songs[index]);
+
+		setTimeout(function(){
+			playMusic();
+		}, intervals[index]);	
+		
+	}
+
+	function doPlay(song) {
+		document.getElementById('musicFrame').src = song;
+	}
+
+	window.onload = playMusic;
+
+</script>
 <body>
 
-	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=17706562&auto=1&height=66"></iframe>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 id="musicFrame"></iframe>
 
 </body>
 </html>
