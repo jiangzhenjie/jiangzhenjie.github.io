@@ -39,13 +39,15 @@ share: false
 举个例子，假设一个场景是从`Keychain`里面取出`Jboy92`这个帐号登录`Baidu`的密码（假设这个密码存储在`Baidu`这个service下）。
 如下代码：
 
-    var query = [String: AnyObject]()
-    query[kSecClass as String] = kSecClassGenericPassword
-    query[kSecAttrService as String] = "Baidu"
-    query[kSecAttrAccount as String] = "Jboy92"
-    query[kSecMatchCaseInsensitive as String] = kCFBooleanTrue
-    query[kSecReturnAttributes as String] = kCFBooleanTrue
-    query[kSecReturnData as String] = kCFBooleanTrue
+```swift
+var query = [String: AnyObject]()
+query[kSecClass as String] = kSecClassGenericPassword
+query[kSecAttrService as String] = "Baidu"
+query[kSecAttrAccount as String] = "Jboy92"
+query[kSecMatchCaseInsensitive as String] = kCFBooleanTrue
+query[kSecReturnAttributes as String] = kCFBooleanTrue
+query[kSecReturnData as String] = kCFBooleanTrue
+```
 
 上面代码中，`kSecReturnAttributes`指定了需要返回item的属性，`kSecReturnData`指定了需要返回item的数据，即这里的密码。
 
@@ -60,83 +62,85 @@ share: false
 
 这几个方法的使用比较简单，最主要还是定义好查询字典。继续以上面的场景为例，代码如下：
 
-    func addPassword() {
-        
-        var query = [String: AnyObject]()
-        query[kSecClass as String] = kSecClassGenericPassword
-        query[kSecAttrService as String] = "Baidu"
-        query[kSecAttrAccount as String] = "Jboy92"
-        query[kSecValueData as String] = "test_password".dataUsingEncoding(NSUTF8StringEncoding)
+```swift
+func addPassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    query[kSecValueData as String] = "test_password".dataUsingEncoding(NSUTF8StringEncoding)
 
-        let status = SecItemAdd(query, nil)
-        
-        if status == errSecSuccess {
-            print("Add password succeed")
-        } else {
-            print("Add password failed")
-        }
+    let status = SecItemAdd(query, nil)
+    
+    if status == errSecSuccess {
+        print("Add password succeed")
+    } else {
+        print("Add password failed")
+    }
+}
+    
+func deletePassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    
+    let status = SecItemDelete(query)
+    
+    if status == errSecSuccess {
+        print("Delete password succeed")
+    } else {
+        print("Delete password failed");
     }
     
-    func deletePassword() {
-        
-        var query = [String: AnyObject]()
-        query[kSecClass as String] = kSecClassGenericPassword
-        query[kSecAttrService as String] = "Baidu"
-        query[kSecAttrAccount as String] = "Jboy92"
-        
-        let status = SecItemDelete(query)
-        
-        if status == errSecSuccess {
-            print("Delete password succeed")
-        } else {
-            print("Delete password failed");
-        }
-        
+}
+    
+func updatePassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    
+    var updateAttrs = [String: AnyObject]()
+    updateAttrs[kSecValueData as String] = "update_password".dataUsingEncoding(NSUTF8StringEncoding)
+    
+    let status = SecItemUpdate(query, updateAttrs)
+    
+    if status == errSecSuccess {
+        print("Add password succeed")
+    } else {
+        print("Add password failed")
     }
     
-    func updatePassword() {
-        
-        var query = [String: AnyObject]()
-        query[kSecClass as String] = kSecClassGenericPassword
-        query[kSecAttrService as String] = "Baidu"
-        query[kSecAttrAccount as String] = "Jboy92"
-        
-        var updateAttrs = [String: AnyObject]()
-        updateAttrs[kSecValueData as String] = "update_password".dataUsingEncoding(NSUTF8StringEncoding)
-        
-        let status = SecItemUpdate(query, updateAttrs)
-        
-        if status == errSecSuccess {
-            print("Add password succeed")
-        } else {
-            print("Add password failed")
-        }
-        
+}
+    
+func queryPassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    query[kSecMatchLimit as String] = kSecMatchLimitOne
+    query[kSecReturnData as String] = kCFBooleanTrue
+    
+    var result: AnyObject?
+    let status = withUnsafeMutablePointer(&result) {
+        SecItemCopyMatching(query, UnsafeMutablePointer($0))
     }
     
-    func queryPassword() {
-        
-        var query = [String: AnyObject]()
-        query[kSecClass as String] = kSecClassGenericPassword
-        query[kSecAttrService as String] = "Baidu"
-        query[kSecAttrAccount as String] = "Jboy92"
-        query[kSecMatchLimit as String] = kSecMatchLimitOne
-        query[kSecReturnData as String] = kCFBooleanTrue
-        
-        var result: AnyObject?
-        let status = withUnsafeMutablePointer(&result) {
-            SecItemCopyMatching(query, UnsafeMutablePointer($0))
+    if status == errSecSuccess {
+        if let result = result as? NSData {
+            print(String(data: result, encoding: NSUTF8StringEncoding))
         }
-        
-        if status == errSecSuccess {
-            if let result = result as? NSData {
-                print(String(data: result, encoding: NSUTF8StringEncoding))
-            }
-        } else {
-            print("No password");
-        }
-    
+    } else {
+        print("No password");
     }
+    
+}
+```
 
 一般会封装一个工具类来处理`Keychain`的操作，如[Keychain](https://github.com/jiangzhenjie/KeychainDemo/blob/master/KeychainDemo/Keychain.swift)或者Github上其他[开源库](https://github.com/search?o=desc&q=keychain&s=stars&type=Repositories&utf8=%E2%9C%93)
 
