@@ -1,0 +1,316 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>iOS Keychain Sharing &#8211; Jboy's Tech Blog</title>
+<meta name="description" content="Learning and Recording">
+<meta name="keywords" content="iOS">
+
+
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS Keychain Sharing">
+<meta property="og:description" content="Learning and Recording">
+<meta property="og:url" content="/ios-keychain-services/">
+<meta property="og:site_name" content="Jboy's Tech Blog">
+
+
+
+
+
+<link rel="canonical" href="/ios-keychain-services/">
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Jboy's Tech Blog Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<!-- Webfonts -->
+<link href="//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic" rel="stylesheet" type="text/css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- Load Modernizr -->
+<script src="/assets/js/vendor/modernizr-2.6.2.custom.min.js"></script>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/images/apple-touch-icon-144x144-precomposed.png">
+
+
+
+</head>
+
+<body id="post" >
+
+<!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+<nav id="dl-menu" class="dl-menuwrapper" role="navigation">
+	<button class="dl-trigger">Open Menu</button>
+	<ul class="dl-menu">
+		<li><a href="/">Home</a></li>
+		<li>
+			<a href="#">About</a>
+			<ul class="dl-submenu">
+				<li>
+					<img src="/images/avatar.png" alt="Jboy photo" class="author-photo">
+					<h4>Jboy</h4>
+					<p>Write the code, change the world</p>
+				</li>
+				<li><a href="/about/"><span class="btn btn-inverse">Learn More</span></a></li>
+				<li>
+					<a href="mailto:zhenjie.dev@gmail.com"><i class="fa fa-fw fa-envelope"></i> Email</a>
+				</li>
+				
+				
+				
+				
+				<li>
+					<a href="https://github.com/jiangzhenjie"><i class="fa fa-fw fa-github"></i> GitHub</a>
+				</li>
+				
+				
+				
+				
+			</ul><!-- /.dl-submenu -->
+		</li>
+		<li>
+			<a href="#">Posts</a>
+			<ul class="dl-submenu">
+				<li><a href="/posts/">All Posts</a></li>
+				<li><a href="/tags/">All Tags</a></li>
+			</ul>
+		</li>
+		
+	</ul><!-- /.dl-menu -->
+</nav><!-- /.dl-menuwrapper -->
+
+
+
+
+<div id="main" role="main">
+  <article class="hentry">
+    <header class="header-title">
+      <div class="header-title-wrap">
+        
+          <h1 class="entry-title"><a href="/ios-keychain-services/" rel="bookmark" title="iOS Keychain Sharing">iOS Keychain Sharing</a></h1>
+        
+        <h2><span class="entry-date date published"><time datetime="2016-04-06T00:00:00-04:00">April 06, 2016</time></span></h2>
+        
+      </div><!-- /.header-title-wrap -->
+    </header>
+    <div class="entry-content">
+      <p>在iOS系统中，通常使用钥匙串（<code class="highlighter-rouge">Keychain</code>）存储一些敏感信息，比如密码，证书等等。每个应用程序只能访问自己的<code class="highlighter-rouge">Kechain</code>条目。</p>
+
+<h2 id="keychain-">Keychain 结构</h2>
+
+<p>每个<code class="highlighter-rouge">Keychain</code>包含多个<code class="highlighter-rouge">Keychain item</code>，每个<code class="highlighter-rouge">Keychain item</code>包含数据（data）和一系列属性（attributes）。
+对于一些需要被保护的<code class="highlighter-rouge">Keychain item</code>，比如密码或者用于加密的私钥，<code class="highlighter-rouge">Keychain</code>会对其数据进行加密保护；
+而对一些不需要被保护的数据，比如证书，<code class="highlighter-rouge">Keychain</code>不会将其数据加密。
+<code class="highlighter-rouge">Keychain item</code>的属性(attributes)根据不同的类型item而不同，最常用的两种item的类型是：因特网密码（Internet passwords）和 通用密码（generic passwords）。
+因特网密码item包含安全域名，协议类型和路径等属性。
+通用密码item包含服务(service)，账户(account)等属性。通常在开发中，使用通用密码item来存储用户密码或者一些敏感的数据。</p>
+
+<h2 id="keychain--1">Keychain 访问</h2>
+
+<p>如上节所述，每个<code class="highlighter-rouge">Keychain item</code>包含数据和一系列属性，因此访问<code class="highlighter-rouge">Keychain item</code>是通过定义一个查询字典（query dictionary）,然后传递给系统提供的操作方法（增删改查）来完成。</p>
+
+<h3 id="query-dictionary">查询字典（query dictionary）</h3>
+
+<p>查询字典是访问<code class="highlighter-rouge">Keychain item</code>的依据，因此对于访问<code class="highlighter-rouge">Keychain item</code>，查询字典的构建为首要操作。</p>
+
+<p>通常，一个典型的查询字典包含：</p>
+
+<ul>
+  <li>一个类别键值对，用于指定<code class="highlighter-rouge">Keychain item</code>的类型。比如 <code class="highlighter-rouge">kSecClass: kSecClassGenericPassword</code> 指定了需要查询的item的类型为通用密码类型。</li>
+  <li>一个或多个键值对，用于指定<code class="highlighter-rouge">Keychain item</code>满足的属性。比如 <code class="highlighter-rouge">kSecAttrService: "Baidu"</code>和<code class="highlighter-rouge">kSecAttrAccount: "Jboy92"</code> 指定了需要查询的item的服务名称是<code class="highlighter-rouge">Baidu</code>，账户是<code class="highlighter-rouge">Jboy92</code>。</li>
+  <li>一个或多个查询键值对，用于指定进一步细化搜索。比如 <code class="highlighter-rouge">kSecMatchCaseInsensitive: kCFBooleanTrue</code> 指定了查询是忽略大小写的。</li>
+  <li>一个返回结果类型键值对，用于指定期望返回的结果类型。比如 <code class="highlighter-rouge">kSecReturnData: kCFBooleanTrue</code> 指定了需要返回item的数据。</li>
+</ul>
+
+<p>不同类型的<code class="highlighter-rouge">Keychain item</code>的属性有所不同，应该按照<code class="highlighter-rouge">Keychain item</code>的类型来指定相应的查询属性。</p>
+
+<p>举个例子，假设一个场景是从<code class="highlighter-rouge">Keychain</code>里面取出<code class="highlighter-rouge">Jboy92</code>这个帐号登录<code class="highlighter-rouge">Baidu</code>的密码（假设这个密码存储在<code class="highlighter-rouge">Baidu</code>这个service下）。
+如下代码：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var query = [String: AnyObject]()
+query[kSecClass as String] = kSecClassGenericPassword
+query[kSecAttrService as String] = "Baidu"
+query[kSecAttrAccount as String] = "Jboy92"
+query[kSecMatchCaseInsensitive as String] = kCFBooleanTrue
+query[kSecReturnAttributes as String] = kCFBooleanTrue
+query[kSecReturnData as String] = kCFBooleanTrue
+</code></pre>
+</div>
+
+<p>上面代码中，<code class="highlighter-rouge">kSecReturnAttributes</code>指定了需要返回item的属性，<code class="highlighter-rouge">kSecReturnData</code>指定了需要返回item的数据，即这里的密码。</p>
+
+<h3 id="section">操作函数</h3>
+
+<p>对于<code class="highlighter-rouge">Keychain item</code>的操作，系统提供了四个方法，分别是增删改查：</p>
+
+<ul>
+  <li><code class="highlighter-rouge">SecItemAdd</code></li>
+  <li><code class="highlighter-rouge">SecItemDelete</code></li>
+  <li><code class="highlighter-rouge">SecItemUpdate</code></li>
+  <li><code class="highlighter-rouge">SecItemCopyMatching</code></li>
+</ul>
+
+<p>这几个方法的使用比较简单，最主要还是定义好查询字典。继续以上面的场景为例，代码如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>func addPassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    query[kSecValueData as String] = "test_password".dataUsingEncoding(NSUTF8StringEncoding)
+
+    let status = SecItemAdd(query, nil)
+    
+    if status == errSecSuccess {
+        print("Add password succeed")
+    } else {
+        print("Add password failed")
+    }
+}
+
+func deletePassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    
+    let status = SecItemDelete(query)
+    
+    if status == errSecSuccess {
+        print("Delete password succeed")
+    } else {
+        print("Delete password failed");
+    }
+    
+}
+
+func updatePassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    
+    var updateAttrs = [String: AnyObject]()
+    updateAttrs[kSecValueData as String] = "update_password".dataUsingEncoding(NSUTF8StringEncoding)
+    
+    let status = SecItemUpdate(query, updateAttrs)
+    
+    if status == errSecSuccess {
+        print("Add password succeed")
+    } else {
+        print("Add password failed")
+    }
+    
+}
+
+func queryPassword() {
+    
+    var query = [String: AnyObject]()
+    query[kSecClass as String] = kSecClassGenericPassword
+    query[kSecAttrService as String] = "Baidu"
+    query[kSecAttrAccount as String] = "Jboy92"
+    query[kSecMatchLimit as String] = kSecMatchLimitOne
+    query[kSecReturnData as String] = kCFBooleanTrue
+    
+    var result: AnyObject?
+    let status = withUnsafeMutablePointer(&amp;result) {
+        SecItemCopyMatching(query, UnsafeMutablePointer($0))
+    }
+    
+    if status == errSecSuccess {
+        if let result = result as? NSData {
+            print(String(data: result, encoding: NSUTF8StringEncoding))
+        }
+    } else {
+        print("No password");
+    }
+
+}
+</code></pre>
+</div>
+
+<p>一般会封装一个工具类来处理<code class="highlighter-rouge">Keychain</code>的操作，如<a href="https://github.com/jiangzhenjie/KeychainDemo/blob/master/KeychainDemo/Keychain.swift">Keychain</a>或者Github上其他<a href="https://github.com/search?o=desc&amp;q=keychain&amp;s=stars&amp;type=Repositories&amp;utf8=%E2%9C%93">开源库</a></p>
+
+<h3 id="keychaintodo">使用Keychain实现应用间共享数据(todo)</h3>
+
+<h2 id="section-1">参考</h2>
+
+<ul>
+  <li><a href="https://developer.apple.com/library/mac/documentation/Security/Conceptual/keychainServConcepts/01introduction/introduction.html#//apple_ref/doc/uid/TP30000897-CH203-TP1">Keychain Services Programming Guide</a></li>
+  <li><a href="https://developer.apple.com/library/mac/documentation/Security/Reference/keychainservices/index.html#//apple_ref/doc/uid/TP30000898">Keychain Services Reference</a></li>
+  <li><a href="https://opensource.apple.com/source/libsecurity_keychain/libsecurity_keychain-38259/lib/SecItem.h">SecItem.h</a></li>
+</ul>
+
+
+      <footer class="entry-meta">
+        <span class="entry-tags"><a href="/tags/#iOS" title="Pages tagged iOS" class="tag"><span class="term">iOS</span></a></span>
+        <span>Updated on <span class="entry-date date updated"><time datetime="2016-04-06">April 06, 2016</time></span></span>
+        <span class="author vcard"><span class="fn">Jboy</span></span>
+        
+      </footer>
+    </div><!-- /.entry-content -->
+    
+    <div class="read-more">
+  
+    <div class="read-more-header">
+      <a href="/objc-block-declare/" class="read-more-btn">Read More</a>
+    </div><!-- /.read-more-header -->
+    <div class="read-more-content">
+      <h3><a href="/objc-block-declare/" title="Objc Block语法">Objc Block语法</a></h3>
+      <p>局部变量returnType (^blockName)(parameterTypes) = ^(parameters) {...};例子：void (^handler)(NSString *, NSError *) = ^(NSString *string, NSError...&hellip; <a href="/objc-block-declare/">Continue reading</a></p>
+    </div><!-- /.read-more-content -->
+  
+  <div class="read-more-list">
+    
+      <div class="list-item">
+        <h4><a href="/ios-variable-parameters/" title="iOS可变参数">iOS可变参数</a></h4>
+        <span>Published on March 17, 2016</span>
+      </div><!-- /.list-item -->
+    
+  </div><!-- /.read-more-list -->
+</div><!-- /.read-more -->
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo">
+    <span>&copy; 2016 Jboy. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/hpstr-jekyll-theme/" rel="nofollow">HPSTR Theme</a>.</span>
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="/assets/js/scripts.min.js"></script>
+
+
+
+	        
+
+</body>
+</html>

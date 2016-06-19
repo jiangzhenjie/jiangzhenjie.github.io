@@ -1,0 +1,241 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Objc Block语法 &#8211; Jboy's Tech Blog</title>
+<meta name="description" content="Learning and Recording">
+<meta name="keywords" content="iOS ObjC">
+
+
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objc Block语法">
+<meta property="og:description" content="Learning and Recording">
+<meta property="og:url" content="/objc-block-declare/">
+<meta property="og:site_name" content="Jboy's Tech Blog">
+
+
+
+
+
+<link rel="canonical" href="/objc-block-declare/">
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Jboy's Tech Blog Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<!-- Webfonts -->
+<link href="//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic" rel="stylesheet" type="text/css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- Load Modernizr -->
+<script src="/assets/js/vendor/modernizr-2.6.2.custom.min.js"></script>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/images/apple-touch-icon-144x144-precomposed.png">
+
+
+
+</head>
+
+<body id="post" >
+
+<!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+<nav id="dl-menu" class="dl-menuwrapper" role="navigation">
+	<button class="dl-trigger">Open Menu</button>
+	<ul class="dl-menu">
+		<li><a href="/">Home</a></li>
+		<li>
+			<a href="#">About</a>
+			<ul class="dl-submenu">
+				<li>
+					<img src="/images/avatar.png" alt="Jboy photo" class="author-photo">
+					<h4>Jboy</h4>
+					<p>Write the code, change the world</p>
+				</li>
+				<li><a href="/about/"><span class="btn btn-inverse">Learn More</span></a></li>
+				<li>
+					<a href="mailto:zhenjie.dev@gmail.com"><i class="fa fa-fw fa-envelope"></i> Email</a>
+				</li>
+				
+				
+				
+				
+				<li>
+					<a href="https://github.com/jiangzhenjie"><i class="fa fa-fw fa-github"></i> GitHub</a>
+				</li>
+				
+				
+				
+				
+			</ul><!-- /.dl-submenu -->
+		</li>
+		<li>
+			<a href="#">Posts</a>
+			<ul class="dl-submenu">
+				<li><a href="/posts/">All Posts</a></li>
+				<li><a href="/tags/">All Tags</a></li>
+			</ul>
+		</li>
+		
+	</ul><!-- /.dl-menu -->
+</nav><!-- /.dl-menuwrapper -->
+
+
+
+
+<div id="main" role="main">
+  <article class="hentry">
+    <header class="header-title">
+      <div class="header-title-wrap">
+        
+          <h1 class="entry-title"><a href="/objc-block-declare/" rel="bookmark" title="Objc Block语法">Objc Block语法</a></h1>
+        
+        <h2><span class="entry-date date published"><time datetime="2016-03-17T00:00:00-04:00">March 17, 2016</time></span></h2>
+        
+      </div><!-- /.header-title-wrap -->
+    </header>
+    <div class="entry-content">
+      <h3 id="section">局部变量</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>returnType (^blockName)(parameterTypes) = ^(parameters) {...};
+</code></pre>
+</div>
+
+<p>例子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>void (^handler)(NSString *, NSError *) = ^(NSString *string, NSError *error) {
+    NSLog(@"%@ %@", string, error);
+};
+[self testWithParams:@{@"key": @"value"} completionHandler:handler];
+</code></pre>
+</div>
+
+<h3 id="property">property</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">copy</span><span class="p">)</span> <span class="n">returnType</span> <span class="p">(</span><span class="o">^</span><span class="n">blockName</span><span class="p">)(</span><span class="n">parameterTypes</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>例子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">copy</span><span class="p">)</span> <span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="n">handler</span><span class="p">)(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="n">NSError</span> <span class="o">*</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<h3 id="section-1">方法声明</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- (void)methodWithBlock:(returnType (^)(parameters))blockName;
+</code></pre>
+</div>
+
+<p>例子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- (void)testWithParams:(NSDictionary *)params completionHandler:(void(^)(NSString *string, NSError *error))handler;
+</code></pre>
+</div>
+
+<h3 id="section-2">方法调用</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>[obj methodWithBlock:^(parameters) {...}];
+</code></pre>
+</div>
+
+<p>例子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>[self testWithParams:@{@"key": @"value"} completionHandler:^(NSString *string, NSError *error) {
+    NSLog(@"%@ %@", string, error);
+}];
+</code></pre>
+</div>
+
+<h3 id="typedef">typedef定义</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef returnType (^TypeName)(parameterTypes);
+TypeName blockName = ^(parameters) {...};
+</code></pre>
+</div>
+
+<p>例子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef void (^MyHandler)(NSString *, NSError *);
+MyHandler handler = ^(NSString *string, NSError *error) {
+    NSLog(@"%@ %@", string, error);
+};
+[self testWithParams:@{@"key": @"value"} completionHandler:handler];
+</code></pre>
+</div>
+
+<h3 id="section-3">参考</h3>
+
+<ul>
+  <li><a href="http://fuckingblocksyntax.com/">How Do I Declare A Block in Objective-C?</a></li>
+</ul>
+
+      <footer class="entry-meta">
+        <span class="entry-tags"><a href="/tags/#iOS ObjC" title="Pages tagged iOS ObjC" class="tag"><span class="term">iOS ObjC</span></a></span>
+        <span>Updated on <span class="entry-date date updated"><time datetime="2016-03-17">March 17, 2016</time></span></span>
+        <span class="author vcard"><span class="fn">Jboy</span></span>
+        
+      </footer>
+    </div><!-- /.entry-content -->
+    
+    <div class="read-more">
+  
+    <div class="read-more-header">
+      <a href="/ios-variable-parameters/" class="read-more-btn">Read More</a>
+    </div><!-- /.read-more-header -->
+    <div class="read-more-content">
+      <h3><a href="/ios-keychain-services/" title="iOS Keychain Sharing">iOS Keychain Sharing</a></h3>
+      <p>在iOS系统中，通常使用钥匙串（`Keychain`）存储一些敏感信息，比如密码，证书等等。每个应用程序只能访问自己的`Kechain`条目。## Keychain 结构每个`Keychain`包含多个`Keychain item`，每个`Keychain item`包含数...&hellip; <a href="/ios-keychain-services/">Continue reading</a></p>
+    </div><!-- /.read-more-content -->
+  
+  <div class="read-more-list">
+    
+      <div class="list-item">
+        <h4><a href="/ios-variable-parameters/" title="iOS可变参数">iOS可变参数</a></h4>
+        <span>Published on March 17, 2016</span>
+      </div><!-- /.list-item -->
+    
+  </div><!-- /.read-more-list -->
+</div><!-- /.read-more -->
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo">
+    <span>&copy; 2016 Jboy. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/hpstr-jekyll-theme/" rel="nofollow">HPSTR Theme</a>.</span>
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="/assets/js/scripts.min.js"></script>
+
+
+
+	        
+
+</body>
+</html>
