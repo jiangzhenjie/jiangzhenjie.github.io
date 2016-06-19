@@ -2,7 +2,7 @@
 layout: post
 title: Objc Block语法
 modified: 2016-03-17
-tags: [iOS ObjC]
+tags: [ObjC]
 share: false
 ---
 
